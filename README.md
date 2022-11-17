@@ -137,7 +137,6 @@ systemctl enable xray
 systemctl enable nginx
 ```
 ### apply certification automatically
-- modify config
 ```
 vi /etc/ssl/private/xray-cert-renew.sh
 ```
@@ -153,4 +152,8 @@ echo "Read Permission Granted for Private Key"
 sudo systemctl restart xray
 echo "Xray Restarted"
 ```
-- 
+```
+chmod +x /etc/ssl/private/xray-cert-renew.sh
+crontab -e
+0 1 1 * *   bash /etc/ssl/private/xray-cert-renew.sh
+```
