@@ -157,3 +157,30 @@ chmod +x /etc/ssl/private/xray-cert-renew.sh
 crontab -e
 0 1 1 * *   bash /etc/ssl/private/xray-cert-renew.sh
 ```
+### bbr
+- 修改系统变量
+```
+echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+```
+- 保存生效
+```
+sysctl -p
+```
+- 查看内核是否已开启BBR
+```
+sysctl net.ipv4.tcp_available_congestion_control
+```
+- 显示以下即已开启：
+```
+net.ipv4.tcp_available_congestion_control = reno cubic bbr
+```
+- 查看BBR是否启动
+```
+lsmod | grep bbr
+```
+- 显示返回值即启动成功：
+```
+tcp_bbr 20480 21
+# 返回值有 tcp_bbr 模块即说明 bbr 启动。
+```
