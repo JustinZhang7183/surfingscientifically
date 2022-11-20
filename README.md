@@ -184,3 +184,76 @@ lsmod | grep bbr
 tcp_bbr 20480 21
 # 返回值有 tcp_bbr 模块即说明 bbr 启动。
 ```
+### WARP
+- check netflix
+```
+#项目地址：https://github.com/sjlleo/netflix-verify
+
+#下载检测解锁程序
+wget -O nf https://github.com/sjlleo/netflix-verify/releases/download/v3.1.0/nf_linux_amd64 && chmod +x nf
+
+#执行
+./nf
+
+#通过代理执行
+./nf -proxy socks5://127.0.0.1:40000
+```
+- install warp
+```
+#官方教程：https://pkg.cloudflareclient.com/install
+
+#安装WARP仓库GPG 密钥：
+curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+
+#添加WARP源：
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+
+#更新APT缓存：
+apt update
+
+#安装WARP：
+apt install cloudflare-warp
+
+#注册WARP：
+warp-cli register
+
+#设置为代理模式（一定要先设置）：
+warp-cli set-mode proxy
+
+#连接WARP：
+warp-cli connect
+
+#查询代理后的IP地址：
+curl ifconfig.me --proxy socks5://127.0.0.1:40000
+```
+### modify xray configuration
+- outbounds
+```
+    {
+      "tag": "netflix_proxy",
+      "protocol": "socks",
+      "settings": {
+        "servers": [
+          {
+            "address": "127.0.0.1",
+            "port": 40000
+          }
+        ]
+      }
+    }
+```
+- routing.rules
+```
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "netflix_proxy",
+        "domain": [
+          "geosite:netflix",
+          "geosite:disney"
+        ]
+      }
+    ]
+  }
+```
